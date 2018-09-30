@@ -47,10 +47,44 @@ tags: iOS开发
 - 右边加好，在辅助窗口中打开
 ![](https://upload-images.jianshu.io/upload_images/1241385-53ab18bbde9c8dda.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 7. 跳转到当前文件在导航栏中的位置： `shift+cmd+j`
-8. `Utilities（cmd+option+0）`层级下的副级按钮：
+8. 使xcode指定区域取得焦点: `cmd+j`
+![](https://upload-images.jianshu.io/upload_images/1241385-e5fc54c364edc8f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+9. `Utilities（cmd+option+0）`层级下的副级按钮：
 ![](https://upload-images.jianshu.io/upload_images/1241385-4078c5997806d5dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 | 操作 |左侧|右侧|
 | :-: | :-: | :-: |
 | 解释 | 显示文件检查 | 显示帮助 |
 | 快捷键 | `option+cmd+1` | `option+cmd+2` |
+
+10. `cmd+\` : 在当前行添加（删除）断点
+`cmd+Y` : 激活（取消激活）全部断点
+
+11. 显示方法调用栈
+```
+- (void)viewDidLoad {
+[super viewDidLoad];
+
+self.arr = @[@"1",@"2",@"3",@"4",@"5",@"6",@"7"];
+
+[self testMethod];
+}
+
+- (void)testMethod {
+NSLog(@"%@",self.arr);
+}
+```
+如上面代码：
+`ctrl+1`调出界面：可以看到**调用该方法的位置**以及**该方法中别的方法的调用栈**
+![调用该方法的位置](https://upload-images.jianshu.io/upload_images/1241385-b999841e4051a1b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![该方法中别的方法的调用栈](https://upload-images.jianshu.io/upload_images/1241385-941843fe74101f89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+12. 到指定行号：
+![](https://upload-images.jianshu.io/upload_images/1241385-b48a960e0180d398.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+13. `cmd+option+L`跳转到光标所在行
+
+
+
+[参考资料](http://www.cocoachina.com/ios/20141225/10761.html)
+[参考资料2](https://juejin.im/post/5a3b1bf8f265da432f314788)
