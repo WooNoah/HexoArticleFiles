@@ -9,7 +9,7 @@ tags:
 最近改页面，要实现一个用户分步完善信息的页面，印象中以前在别的应用中见过类似的设计，美团或者是什么的，本来想着在网上找找类似的，改下就行了，然后，找了半天，发现并没有类似的，没办法，只能自己来了
 #### 实现
 先上效果图吧，如果您看符合您的需求，那么您可以参考下，如果不符合，但是也比较感兴趣，也可以帮忙给我瞅瞅有没有BUG，谢谢
-![这里写图片描述](http://img.blog.csdn.net/20170331145731116?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd3d3d3d3d3d3d3d3ZGk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![](https://upload-images.jianshu.io/upload_images/1241385-1c9ff61b84ff2b6c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 <!--more-->
 
 **有几点特殊的需求**

@@ -72,7 +72,7 @@ tags:
 iOS 的 UITableViewCell 有一个很严重的问题，是 7.x 某个版本以后引起的，如果给 detailTextLabel.text 设置 nil 或者 ""，再设置具体的 text 后有时会显示不出来，但 Tap 一下能出来。具体的解决办法是，不要设置 nil 或 ""，设置 " " （中间有空格）。真是让人吐血的 Workaround。
 ```
 当时的设计是这样的：
-![这里写图片描述](http://img.blog.csdn.net/20170314151804156?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd3d3d3d3d3d3d3d3ZGk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![](https://upload-images.jianshu.io/upload_images/1241385-af3fef9f3050f7f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 然后设置头像那里，我想着偷下懒: 设置cell的`detailTextLabel为@“”`，再添加一个ImageView，然后添加约束，就可以了。
 

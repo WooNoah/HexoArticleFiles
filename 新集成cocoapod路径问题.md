@@ -22,7 +22,7 @@ tags:
 -   更新`pod update`
 
 **然后**，就出现了以下的问题
-![这里写图片描述](http://img.blog.csdn.net/20170324150644507?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd3d3d3d3d3d3d3d3ZGk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![](https://upload-images.jianshu.io/upload_images/1241385-b93e3783eccf2beb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 
