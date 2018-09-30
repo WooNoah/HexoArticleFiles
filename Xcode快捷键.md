@@ -83,7 +83,7 @@ NSLog(@"%@",self.arr);
 12. 到指定行号：
 ![](https://upload-images.jianshu.io/upload_images/1241385-b48a960e0180d398.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 13. `cmd+option+L`跳转到光标所在行
-
+14. `cmd+ctrl+J`跳转到方法（变量）声明处
 
 
 [参考资料](http://www.cocoachina.com/ios/20141225/10761.html)
