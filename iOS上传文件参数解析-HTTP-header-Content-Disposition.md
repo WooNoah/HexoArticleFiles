@@ -55,3 +55,6 @@ NSMutableDictionary *mutableHeaders = [NSMutableDictionary dictionary];
 
 https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Content-Disposition
 https://tools.ietf.org/html/rfc6266
+https://blog.csdn.net/sinat_38364990/article/details/70867357
+http://blog.csdn.net/wwlhsgs/article/details/45075327
+http://www.cnblogs.com/brucejia/archive/2012/12/24/2831060.html
