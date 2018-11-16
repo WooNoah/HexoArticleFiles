@@ -50,3 +50,6 @@ tags:
 |dictM|__NSDictionaryM|
 |[dict copy]|__NSFrozenDictioinaryM|
 |[dict mutableCopy]|__NSDictionaryM|
+
+
+[给个demo](https://github.com/WooNoah/iOSBasicClassType)
