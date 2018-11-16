@@ -24,9 +24,7 @@ svn log ProjectName/Info.plist
 //以下就是展示7504版本和7487版本之间 info.plist文件的变化
 svn diff -r 7504:7487 ProjectName/Info.plist
 ```
-
 <!--more-->
-
 #### 3. svn add 
 > Put files and directories under version control, scheduling
 them for addition to repository.  They will be added in next commit.
@@ -119,7 +117,24 @@ $ svn ls svn://192.168.0.178/yewu/branches
 
 svn ls svn://192.168.0.178/yewu/branches --verbose
 ```
+#### 11. UserInterfaceState.xcuserstate文件冲突
+>这里要首先介绍一下xcode中一些文件的含义：
+
+首先看下Stack Overflow上`关于Xcode project和workspace之间区别`的解释
+![](https://upload-images.jianshu.io/upload_images/1241385-489c857bfb2ee292.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)![](https://upload-images.jianshu.io/upload_images/1241385-d4a6d2e3579d1c3e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)![](https://upload-images.jianshu.io/upload_images/1241385-4ba9f8f30829dc42.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)![](https://upload-images.jianshu.io/upload_images/1241385-acf7c2e20d5db7b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+xcshareddata：里边配置一些项目相关的配置，比如scheme，target等等
+xcuserdata：用来存放一些xcode相关的配置，里边包含了一个文件`UserInterfaceState.xcuserstate`，此文件是专门用来记录用户**Xcode**的一些操作，比如点击了某个类进行编辑，或者在哪打了一个断点什么的。
+
+因此，`UserInterfaceState.xcuserstate`这个文件变化相当的大，而且，此文件没必要添加到版本控制中
+解决办法：
+在提交SVN的时候，忽略掉此文件，如果此文件已经添加到SVN上，那么先在删除服务器上删除此文件，然后在`Cornerstone`的配置中忽略掉它，那么以后再提交的时候，就不会有这个问题了。
+![](https://upload-images.jianshu.io/upload_images/1241385-33c3f65570c2e464.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 
 #### 参考
 https://blog.csdn.net/u014100559/article/details/50539232 
+https://blog.csdn.net/cbbbc/article/details/52585570
+https://www.jianshu.com/p/69b750594d6a
+https://stackoverflow.com/questions/21631313/xcode-project-vs-xcode-workspace-differences
