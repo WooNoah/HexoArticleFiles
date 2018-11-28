@@ -137,8 +137,11 @@ self.sema = dispatch_semaphore_create(2);
 self.queue = dispatch_queue_create(0, 0);
 ```
 -------------------
+2018年11月28日
+今天我又试了一下：发现竟然又不崩溃了？？？？
+而且也无法复现那个问题了。。。excuse me ???
 
-
+--------------------
 ##### 异步变同步
 下面的实现是一种取巧的方法，达到了同步的效果，
 ```
@@ -167,8 +170,24 @@ NSLog(@"--------------------------complete-----------------");
 --------------------------complete-----------------
 ```
 
+##### 这里有一个问题点：创建semaphore的时候的初始值问题
 
-#### 2. 多个异步操作结束之后，统一操作
+我们都知道，此semaphore值，就是用来限制最大并行线程的，也就是说如果传1，则运行的时候，同一时间只能处理一个线程。如果传4，则同时处理4个。那有没有考虑过，[如果传0呢？](https://www.google.com/search?q=dispatch+semaphore+create+0)
+这里给出了苹果文档上的[解释](https://developer.apple.com/documentation/dispatch/1452955-dispatch_semaphore_create?language=objc)
+> Passing zero for the value is useful for when two threads need to reconcile the completion of a particular event. 
+Passing a value greater than zero is useful for managing a finite pool of resources, where the pool size is equal to the value.
+
+大意好像是：
+*如果传0进去，则会使两个线程同时处理完成回调。（当两个线程需要使某个事件完成一致）*
+*如果传大于0的值进去，会使队列资源池变为有限的，从而限制最大并发数*
+
+##### 关于队列资源池：
+![](https://upload-images.jianshu.io/upload_images/1241385-60f9b2174770d964.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)![](https://upload-images.jianshu.io/upload_images/1241385-5e19a6f01d814ad2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)![](https://upload-images.jianshu.io/upload_images/1241385-15699ac4262d1996.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)![](https://upload-images.jianshu.io/upload_images/1241385-52245f4e5ff2351c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+详见[Objective-C高级编程 iOS与OS X多线程和内存管理第三章]()
+
+
+
+#### 2. 多个异步操作结束之后，统一操作(dispatch_group)
 > 用到的方法：
 dispatch_group_enter()
 dispatch_group_leave()
@@ -317,5 +336,118 @@ dispatch_queue_t queue = dispatch_get_global_queue(0, 0);
 ......
 }
 ```
+
+#### 3. dispatch_barrier
+其实添加依赖之类的操作，除了使用上面的两个， 还可以使用`dispatch_barrier`
+> notes:
+但是有一点要先说明：
+dispatch_barrier必须用在[并发队列]()中,而且不能是获取的系统的全局队列，得是通过dispatch_queue_create自己创建的并发队列才可以
+
+```
+/**
+* dispatch_barrier,只在并发队列中才有用，而且不能是获取的系统的全局队列，得是通过dispatch_queue_create自己创建的并发队列才可以
+*/
+- (void)dispatchBarrierFunction {
+dispatch_queue_t queue = dispatch_queue_create("com.fxxxxxx.www", DISPATCH_QUEUE_CONCURRENT);
+dispatch_async(queue, ^{
+NSLog(@"task1 -%@",[NSThread currentThread]);
+});
+
+dispatch_async(queue, ^{
+NSLog(@"task2 -%@",[NSThread currentThread]);
+});
+
+dispatch_async(queue, ^{
+NSLog(@"task3 -%@",[NSThread currentThread]);
+});
+
+dispatch_barrier_async(queue, ^{
+[NSThread sleepForTimeInterval:5];
+NSLog(@"barrier");
+});
+NSLog(@"asynchronous");
+
+dispatch_async(queue, ^{
+NSLog(@"task4 -%@",[NSThread currentThread]);
+});
+
+dispatch_async(queue, ^{
+NSLog(@"task5 -%@",[NSThread currentThread]);
+});
+
+dispatch_async(queue, ^{
+NSLog(@"task6 -%@",[NSThread currentThread]);
+});
+}
+```
+log如下：
+```
+2018-11-28 17:41:56.986682+0800  asynchronous
+2018-11-28 17:41:56.986849+0800  task1 -<NSThread: 0x600002ef63c0>{number = 7, name = (null)}
+2018-11-28 17:41:56.986849+0800  task2 -<NSThread: 0x600002efd7c0>{number = 8, name = (null)}
+2018-11-28 17:41:56.986885+0800  task3 -<NSThread: 0x600002e20e00>{number = 3, name = (null)}
+2018-11-28 17:42:01.991930+0800  barrier
+2018-11-28 17:42:01.992341+0800  task6 -<NSThread: 0x600002ef63c0>{number = 7, name = (null)}
+2018-11-28 17:42:01.992397+0800  task5 -<NSThread: 0x600002e20e00>{number = 3, name = (null)}
+2018-11-28 17:42:01.992341+0800  task4 -<NSThread: 0x600002efd7c0>{number = 8, name = (null)}
+```
+可以看到，**barrier方法可以在中间设置一个阻拦，然后等上面的处理完成之后，再进行下面的操作！**
+但是！！！！如果操作中有网络请求等耗时操作呢？
+```
+/**
+* dispatch_barrier,只在并发队列中才有用，而且不能是获取的系统的全局队列，得是通过dispatch_queue_create自己创建的并发队列才可以
+* 可以看到，带有网络请求异步回调的情况，并不适用，可以使用dispatch_group_enter/dispatch_group_leave或者dispatch_semaphore_wait来实现
+*/
+- (void)dispatchBarrierTest {
+dispatch_queue_t queue = dispatch_queue_create("com.fxxxxxx.wwww", DISPATCH_QUEUE_CONCURRENT);
+
+dispatch_async(queue, ^{
+[self afnRequestWithTag:1 delay:2 complete:^{
+
+}];
+});
+
+dispatch_async(queue, ^{
+[self afnRequestWithTag:2 delay:2 complete:^{
+
+}];
+});
+
+dispatch_async(queue, ^{
+[self afnRequestWithTag:3 delay:2 complete:^{
+
+}];
+});
+
+dispatch_barrier_async(queue, ^{
+NSLog(@"barrier");
+});
+
+dispatch_async(queue, ^{
+[self afnRequestWithTag:4 delay:2 complete:^{
+
+}];
+});
+
+dispatch_async(queue, ^{
+[self afnRequestWithTag:5 delay:2 complete:^{
+
+}];
+});
+
+NSLog(@"--------------------------barrier complete-----------------");
+}
+log:
+2018-11-28 17:44:43.410024+0800  --------------------------barrier complete-----------------
+2018-11-28 17:44:43.410079+0800  barrier
+2018-11-28 17:44:45.425016+0800  --------------------------fail3-----------------
+2018-11-28 17:44:45.425200+0800  --------------------------fail2-----------------
+2018-11-28 17:44:45.425346+0800  --------------------------fail1-----------------
+2018-11-28 17:44:45.425454+0800  --------------------------fail4-----------------
+2018-11-28 17:44:45.425556+0800  --------------------------fail5-----------------
+```
+可以看出来，并不管用了。。
+**所以，如果要在多个操作中请求接口，还是要用上面说的dispatch_group_enter/dispatch_group_leave或者dispatch_semaphore_wait来实现**
+
 
 #### 附文中代码的[Demo](https://github.com/WooNoah/GCDDemo)
