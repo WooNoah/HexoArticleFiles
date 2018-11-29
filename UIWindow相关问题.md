@@ -13,11 +13,13 @@ tags:
 2. 但是以前写地址选择器的时候，子视图上的控件都是`直接添加到新建的view上`，但是现在说的情况是添加到`[[[UIApplication sharedApplication] delegate] window] `或者`[UIApplication sharedApplication].keyWindow`上，情况不太一样
 <!--more-->
 1. 先来说添加到自定义view上的情况：
-![](https://upload-images.jianshu.io/upload_images/1241385-e8bb40d55d5a0bca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](https://upload-images.jianshu.io/upload_images/1241385-6a249965e30cfd89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 实现方法1： 底部放一个遮罩view，用来调整底部背景色，然后主要显示的view放在一个frontView上，子视图也全放在frontView上
 以上面图示为例，层次图如下：
-![层次图](https://upload-images.jianshu.io/upload_images/1241385-a5383c535e54436d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![层次图](https://upload-images.jianshu.io/upload_images/1241385-8c7f129adf47208e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 代码：
 ```
 //底部背景view
@@ -113,7 +115,7 @@ make.height.equalTo(frontView).multipliedBy(0.22);   // 90 / 410
 但是，此时，`底部背景view的手势是可以响应的`。
 2. 再来另外一种实现方式
 内部控件摆放方式都差不多，看个人需要自行摆放，
-主要的差距在，`第一个方法是放在了自定义view，self上了，第二种，就是直接放在主window上`
+主要的差距在，`第一个方法是放在了自定义view(self)上了，第二种，就是直接放在keyWindow上`
 先看效果图：
 ![](https://upload-images.jianshu.io/upload_images/1241385-3df55ff4feee1110.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 可以看到，`此时导航栏已经被遮挡着了`。
@@ -121,6 +123,27 @@ make.height.equalTo(frontView).multipliedBy(0.22);   // 90 / 410
 
 代码：
 ```
+@interface TestView ()
+
+@property (strong, nonatomic) UIButton *btn;
+
+@property (strong, nonatomic) UIView *gestureView;
+
+@property (strong, nonatomic) TestViewTwo *two;
+
+@end
+
+@implementation TestView
+
+- (instancetype)initWithFrame:(CGRect)frame {
+if (self = [super initWithFrame:frame]) {
+self.backgroundColor = [UIColor lightGrayColor];
+[self configSubviews];
+}
+return self;
+}
+
+- (void)configSubviews {
 self.gestureView = [[UIView alloc]initWithFrame:[UIScreen mainScreen].bounds];
 self.gestureView.backgroundColor = [UIColor colorWithWhite:0.4 alpha:1];
 self.gestureView.alpha = 0;
@@ -147,14 +170,41 @@ make.height.equalTo(self.two.mas_width);
 }];
 
 [self show];
+}
+
+- (void)show {
+[UIView animateWithDuration:.25 animations:^{
+self.gestureView.alpha = 1;
+}];
+}
 ```
 外部调用如下：
 ```
+@interface ViewController ()
+@property (strong, nonatomic) TestView *test;
+
+@property (nonatomic,strong) EnsureRepayAlertView *alertView;
+
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad {
+[super viewDidLoad];
+// Do any additional setup after loading the view, typically from a nib.
+}
+
+/**
+* 主viewcontroller中customAction按钮点击事件（弹出会遮挡导航栏的view）
+*/
 - (IBAction)customAction:(id)sender {
 TestView *test = [[TestView alloc]initWithFrame:[UIScreen mainScreen].bounds];
 }
 
 
+/**
+* 主viewcontroller中RepayView按钮点击事件（弹出不会遮挡导航栏的view）
+*/
 - (IBAction)repayAction:(id)sender {
 self.alertView = [[EnsureRepayAlertView alloc]initWithFrame:self.view.bounds];
 [self.view addSubview:self.alertView];
@@ -164,7 +214,7 @@ self.alertView.alpha = 1;
 }
 ```
 此时，方法二的实现方式，你会发现：`内部添加的手势无法响应了！`
-发现这个问题也是很糟心了，我一度怀疑事件传递出现了问题，然后想要使用UIWindow的`[- sendEvent:]`方法来强制添加事件，但是又一次寻找bug的过程中， 我突然想到了打印一下**类的声明周期方法**
+发现这个问题也是很糟心了，我一度怀疑事件传递出现了问题，然后想要使用UIWindow的`[- sendEvent:]`方法来强制添加事件，但是又一次寻找bug的过程中， 我突然想到了打印一下**类的生命周期方法**
 然后，我就打印了`dealloc`方法，然后我竟然发现，`该方法被调用了！`
 然后，顺理成章的，我以为引用计数为0然后被销毁了，所以在外部强引用了此view，
 ```
@@ -178,6 +228,8 @@ self.alertView.alpha = 1;
 self.test = [[TestView alloc]initWithFrame:[UIScreen mainScreen].bounds];
 }
 ```
+可能描述的不是很透彻，这里粘个[Demo](https://github.com/WooNoah/UIWindowSubview)，不清楚的看管可以下载下来，了解一下。
+
 此时再次运行，发现果然手势可以被响应了！
 是不是很开心？然后迫不及待的要上传SVN了？
 NONONO！
@@ -204,7 +256,8 @@ NONONO！
 
 @end
 ```
-然后继续断点调试，发现`SQRegulatorContentView `的delegate属性为nil，猜想，内部子view也调用了dealloc方法，打印如下：
+然后继续断点调试，发现`SQRegulatorContentView `的delegate属性为nil，猜想，内部子view也调用了dealloc方法
+回到demo中验证发现也是如此，打印如下：
 ![](https://upload-images.jianshu.io/upload_images/1241385-f759788322e2c2a9.gif?imageMogr2/auto-orient/strip)
 可以看到：在view创建的时候，竟然执行了dealloc方法。这里网上查到一个类似的问题：也是
 [把AlertView添加到window上然后无法显示的问题](https://blog.csdn.net/lnking1992/article/details/80354773)
