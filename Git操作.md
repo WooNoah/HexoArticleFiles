@@ -27,6 +27,7 @@ tags:
 14.  git reset 切换到
 15.  git merge --no-ff -m "添加的注释" <分支名>    不使用fast-forward合并分支
 16.  git branch -d <分支名>   删除分支
+17.  git checkout -b <sha> 如果误删分支之后，想要恢复，则可以使用git reflog查看到sha之后，直接使用git checkout -b <sha>恢复
 
 <!--more-->
 -------------
