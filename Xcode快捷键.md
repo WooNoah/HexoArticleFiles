@@ -81,9 +81,15 @@ NSLog(@"%@",self.arr);
 ![该方法中别的方法的调用栈](https://upload-images.jianshu.io/upload_images/1241385-941843fe74101f89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 12. 到指定行号：
+`cmd+l`
 ![](https://upload-images.jianshu.io/upload_images/1241385-b48a960e0180d398.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 13. `cmd+option+L`跳转到光标所在行
 14. `cmd+ctrl+J`跳转到方法（变量）声明处
+15. `cmd+option+J` 跳转到导航区`cmd+1`最下边filter框
+![](https://upload-images.jianshu.io/upload_images/1241385-b3021f6fb39f4ec0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+16. 跳转到上一次修改的地方  <必须是集成了Git的项目>
+`ctrl+\`
+![](https://upload-images.jianshu.io/upload_images/1241385-d788b2ce7d11f7ec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 [参考资料](http://www.cocoachina.com/ios/20141225/10761.html)

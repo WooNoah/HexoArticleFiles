@@ -20,9 +20,9 @@ Decrement the counting semaphore. If the resulting value is less than zero, this
 Increment the counting semaphore. If the previous value was less than zero, this function wakes a thread currently waiting in [dispatch_semaphore_wait]()
 信号量加1，如果之前的信号量小于0，则会唤醒dispatch_semaphore_wait方法中等待着的线程
 
-<!--more-->
 
 使用的方法：**先降后升**
+<!--more-->
 先创建信号量，设置能同时执行的最大线程数。如果为1，则同时可执行的线程就是1个，等进入到耗时操作1的时候，先让信号量降低，然后处理完成之后，再调用signal方法使信号量升高，在别的耗时操作中，也是一样的逻辑。
 那么，在耗时操作2开始的时候，由于耗时操作1中信号量为0，且等待时间为`DISPATCH_TIME_FOREVER`，**此时则会一直等待**。
 
@@ -293,7 +293,7 @@ NSLog(@"--------------------------complete-----------------");
 但是！此种写法在时机使用中，遇到了一个问题，会造成整个APP卡死。。
 然后[Bugly]()报错说`max operation count reached`，思来想去也没找到问题。还请知道解决方法的大佬给予明示！thx~
 -----------------------
-今天又接着Google，终于找到了问题所在。受[此文](https://www.jianshu.com/p/29152d90cef7)启发。
+今天又接着Google，终于找到了问题所在。受[此文](http://satanwoo.github.io/2017/01/07/DispatchGroupCrash/)启发。
 项目中代码是在WKWebview的`didFinishNavigation`方法中调用请求方法。
 然后
 ```
@@ -451,3 +451,6 @@ log:
 
 
 #### 附文中代码的[Demo](https://github.com/WooNoah/GCDDemo)
+
+#### 参考
+https://www.jianshu.com/p/29152d90cef7
