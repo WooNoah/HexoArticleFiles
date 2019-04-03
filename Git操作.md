@@ -201,6 +201,48 @@ git rebase HEAD~10  //此时就会整合最近十次的提交
 
 `git pull --tags`
 
+反之，推送则为：
+`git push --tags`或`git push origin --tags`
+
 [https://stackoverflow.com/questions/1204190/does-git-fetch-tags-include-git-fetch](https://stackoverflow.com/questions/1204190/does-git-fetch-tags-include-git-fetch)
 
+---------------------
+#### 2019年04月03日更新 `git tag`相关
+项目中，一般我们是要给某些提交添加tag标识的，以供后来如果有回滚等特殊需求的时候，方便快捷的找到特定版本。
 
+这里来说一下一些常用的操作
+```
+//查看所有tag
+git tag
+//查看指定tag信息
+git show <tagname>
+
+
+//直接给最后一个commit id添加标签
+git tag <tagname>   (<tagname>为版本号，比如1.0)
+//直接给最后一个commit id添加标签，且可以指定标签信息
+git tag -a <tagname> -m '提交tag信息'
+//给指定commit id加标签，然后可以指定标签信息
+git tag -a 版本号 指定版本号 -m '提交tag信息'
+
+
+//删除本地某个tag
+git tag -d <tagname>
+
+
+//提交某一个tag到远端
+git push origin <tagname>
+//推送全部未提交的tag到远端
+git push origin --tags 
+
+
+//从远端删除一个tag，稍微有点麻烦
+//1，需要先从本地删除
+git tag -d <tagname>
+//2, 然后再执行命令
+git push origin :refs/tags/<tagname>
+//即可删除一个远端标签
+```
+##### Reference
+[https://blog.zengrong.net/post/1746.html](https://blog.zengrong.net/post/1746.html)
+[https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0013762144381812a168659b3dd4610b4229d81de5056cc000](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0013762144381812a168659b3dd4610b4229d81de5056cc000)
