@@ -77,8 +77,7 @@ self.view1 = [[UIView alloc]init];
 self.view1.backgroundColor = [UIColor yellowColor];
 [self addSubview:self.view1];
 [self.view1 mas_makeConstraints:^(MASConstraintMaker *make) {
-make.left.top.right.[图片上传中...(Screen Shot 2019-04-17 at 16.42.08.png-4b185e-1555490535620-0)]
-equalTo(self);
+make.left.top.right.equalTo(self);
 make.size.mas_equalTo(CGSizeMake(150, 20));
 }];
 
