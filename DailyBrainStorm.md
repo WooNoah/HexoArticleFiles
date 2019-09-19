@@ -16,3 +16,23 @@ iOS tableview的headerView和footerView,
 #### 2019年09月11日
 iOS label 默认设置lineBreakMode为省略号在右边
 但是如果使用了NSParagraphStyle,则label设置的lineBreakMode就会失效，使用NSMutableParagraphStyle的lineBreakMode代替即可
+
+#### 2019年09月19日
+iOS的collectionView, 如果collectionview的frame不足以展示两个cell，则此时cell会居中显示
+```
+这里以左右滑动为例：collectionview的height为vHeight, cell的height为cHeight。默认collectionview的cell的item间距和item行间距都为0
+如果cHeight < vHeight < 2*cHeight, 此时
+eg:  vHeight = 100; cHeight = 70;
+此时cell居中展示， 上下间距15
+
+如果 2*cHeight < vHeight < 3*cHeight
+此时，view能只能展示两个cell，则两个cell分别位于view的top和bottom，剩下的距离为两个cell之间的margin
+
+如果 3*cHeight < vHeight < 4*cHeight
+此时，view能展示三个cell，则第一个，第三个分别位于view的顶部和底部，然后中间一个居中展示，(vHeight - 3*cHeight)/2为三个cell之间的间距
+
+如果 4*cHeight < vHeight < 5*cHeight
+此时，view能展示四个cell，则第一个，第四个分别位于view的顶部和底部，然后剩下的两个在中间展示，(vHeight - 4*cHeight)/3为三个cell之间的间距
+
+剩下的以此类推
+```
