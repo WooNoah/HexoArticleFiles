@@ -36,3 +36,17 @@ eg:  vHeight = 100; cHeight = 70;
 
 剩下的以此类推
 ```
+
+#### 2019年09月27日
+iOS UIView提供的方法中，有转换坐标系的方法，比如：
+```
+- (CGPoint)convertPoint:(CGPoint)point toView:(nullable UIView *)view;
+- (CGPoint)convertPoint:(CGPoint)point fromView:(nullable UIView *)view;
+- (CGRect)convertRect:(CGRect)rect toView:(nullable UIView *)view;
+- (CGRect)convertRect:(CGRect)rect fromView:(nullable UIView *)view;
+```
+项目中用到了`convertRect: toView:`方法
+总结一下各个参数的含义。
+1. 调用者：转换前的view的父类调用
+2. rect：转换前的view的frame
+3. toView：转换后的坐标系view
