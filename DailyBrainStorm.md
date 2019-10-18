@@ -50,3 +50,62 @@ iOS UIView提供的方法中，有转换坐标系的方法，比如：
 1. 调用者：转换前的view的父类调用
 2. rect：转换前的view的frame
 3. toView：转换后的坐标系view
+
+
+#### 2019年10月17日
+影响iOS viewController dealloc的方法小结
+1. VC中的block强引用了self
+```
+eg: AFN的请求
+在回调中引用了self
+```
+2. dispatch_after中强引用self
+```
+如下面的代码中这样，不引用self，则会直接销毁
+- (void)normalDispatchAfter {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSLog(@"5s later");
+    });
+}
+
+2019-10-18 16:49:56.568192+0800 GCDStrongReferenceDemo[15628:3535241] ~~~~~~~~~~~~~~~~~~~~SecViewController - dealloc
+2019-10-18 16:50:00.070705+0800 GCDStrongReferenceDemo[15628:3535241] 5s later
+但是，after中的代码由于是添加到Runloop中了，所以5s之后，仍然会调用
+
+
+```
+同样的，以前怀疑的dispatch_group/notify等方法也不会强引用self
+```
+    __weak typeof (self) weakSelf = self;
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_queue_create("com.demo.GCDStrongReference", DISPATCH_QUEUE_CONCURRENT);
+    
+    dispatch_group_async(group, queue, ^{
+        dispatch_group_enter(group);
+//        NSLog(@"~~~~~~~~~~~~~~~~~~~~1111111111 enter");
+        [weakSelf logWithInfo:@"11111111  enter"];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            NSLog(@"~~~~~~~~~~~~~~~~~~~~1111111111 leave");
+            [weakSelf logWithInfo:@"11111111  leave"];
+            dispatch_group_leave(group);
+        });
+    });
+    
+    dispatch_group_async(group, queue, ^{
+        dispatch_group_enter(group);
+//        NSLog(@"~~~~~~~~~~~~~~~~~~~~222222222222");
+        [weakSelf logWithInfo:@"22222222222222"];
+        dispatch_group_leave(group);
+    });
+    
+    dispatch_group_notify(group, queue, ^{
+//        NSLog(@"~~~~~~~~~~~~~~~~~~~~notify");
+        [weakSelf logWithInfo:@"notify"];
+    });
+    
+    打印结果也是会直接dealloc
+    2019-10-18 16:58:27.441916+0800 GCDStrongReferenceDemo[15858:3547133] ~~~~~~~~~~~~~~~~~~~~SecViewController - 11111111  enter
+    2019-10-18 16:58:27.441926+0800 GCDStrongReferenceDemo[15858:3547358] ~~~~~~~~~~~~~~~~~~~~SecViewController - 22222222222222
+    2019-10-18 16:58:28.901496+0800 GCDStrongReferenceDemo[15858:3546983] ~~~~~~~~~~~~~~~~~~~~SecViewController - dealloc
+```
+> 总结：如果在block中改为弱引用，则可以避免 __weak typeof(self) weakSelf = self;
