@@ -109,3 +109,10 @@ eg: AFN的请求
     2019-10-18 16:58:28.901496+0800 GCDStrongReferenceDemo[15858:3546983] ~~~~~~~~~~~~~~~~~~~~SecViewController - dealloc
 ```
 > 总结：如果在block中改为弱引用，则可以避免 __weak typeof(self) weakSelf = self;
+
+#### 2019年10月30日 setContentHuggingPriority为抗拉伸优先级
+以前只是按照字面意思，以为是`拉伸优先级`，结果是`抗拉伸优先级`:
+即： 优先级越高，越不容易被拉伸，优先级越低，则越容易被拉伸
+同理，`setContentCompressionResistancePriority`为抗压缩优先级
+即：优先级越高，越不容易被压缩，优先级越低，越容易被压缩。
+默认情况下: HuggingPriority == 250,  CompressionResistancePriority == 750
