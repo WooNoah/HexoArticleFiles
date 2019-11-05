@@ -116,3 +116,11 @@ eg: AFN的请求
 同理，`setContentCompressionResistancePriority`为抗压缩优先级
 即：优先级越高，越不容易被压缩，优先级越低，越容易被压缩。
 默认情况下: HuggingPriority == 250,  CompressionResistancePriority == 750
+
+#### 2019年11月05日 可以在不借助第三个变量的情况下使用异或位运算交换两个数的值
+a = 10
+b = 8
+a = a ^ b
+b = a ^ b
+a = a ^ b
+结果，a = 8, b = 10
