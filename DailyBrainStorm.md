@@ -128,3 +128,18 @@ a = a ^ b
 #### 2019年11月07日 
 iOS13之后，初始化的时候通过约束设置的frame之后，再手动修改frame值时无效。
 
+#### 2019年11月13日
+给iOS Layer添加basic动画的时候，设置fromValue和toValue的值，都是根据初始值的相对大小
+eg:
+假如自己画了一个竖着的时钟时针，那么
+1. fromValue如果设置为0，toValue设置为M_PI,则就是从竖直状态开始,顺时针转动180度。
+2. 如果fromValue为3 * M_PI/2, toValue为 5 * M_PI/2, 则就是从9点钟放心顺时针转到3点钟方向。
+3. 如果fromValue = M_PI/2, toValue = 0, 则就是 逆时针转动90度，从3点钟方向，到12点钟方向。
+以此类推，
+如果初始的时候，时针不是竖直的，而是`沿着x轴水平向右`的。
+那么动画的效果又会截然不同：
+1. fromValue = 0, toValue = M_PI, 3点钟方向 顺时针转到9点钟方向
+2. fromValue = 3 * M_PI/2, toValue = 5 * M_PI/2, 则12点钟方向 顺时针转到 6点钟方向
+3. fromValue = M_PI/2, toValue = 0, 则 6点钟方向，逆时针 到3点钟方向。
+
+
