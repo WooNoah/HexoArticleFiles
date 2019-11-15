@@ -142,4 +142,5 @@ eg:
 2. fromValue = 3 * M_PI/2, toValue = 5 * M_PI/2, 则12点钟方向 顺时针转到 6点钟方向
 3. fromValue = M_PI/2, toValue = 0, 则 6点钟方向，逆时针 到3点钟方向。
 
-
+#### 2019年11月15日
+didset在初始化方法中调用无效. 可以使用kvo代替。
