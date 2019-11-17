@@ -143,4 +143,55 @@ eg:
 3. fromValue = M_PI/2, toValue = 0, 则 6点钟方向，逆时针 到3点钟方向。
 
 #### 2019年11月15日
-didset在初始化方法中调用无效. 可以使用kvo代替。
+swift中的didset在初始化方法中调用无效. 可以使用kvo代替。
+
+#### 2019年11月17日
+##### iOS画弧度和内切圆的时候。一些技巧可以画出扇形、饼状图
+```
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    
+    UIView *animateView = [[UIView alloc]initWithFrame:CGRectMake(100, 100, 100, 100)];
+    
+//    UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:animateView.bounds];
+    UIBezierPath *path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(50, 50) radius:50 startAngle:3*M_PI_2 endAngle:7*M_PI_2 clockwise:YES];
+    
+    CAShapeLayer *layer = [CAShapeLayer layer];
+    layer.frame = animateView.bounds;
+    layer.path = path.CGPath;
+//    layer.strokeStart = 0.1;   //如果不加动画，这里可以直接设置起始和终点位置。如果要加动画，则设置动画的fromValue、toValue替代
+//    layer.strokeEnd = 0.5;
+    layer.lineWidth = 90;       //如果想要画扇形。设置lineWidth [0, 2 * radius), 当lineWidth = 2*radius的时候，画出来的是饼状图
+//    layer.lineCap = kCALineCapRound; //想要画扇形、饼状图。不要设置kCALineCapRound此属性。
+    layer.strokeColor = [UIColor redColor].CGColor;
+    layer.fillColor = [UIColor yellowColor].CGColor;
+    self.animateLayer = layer;
+    
+    [animateView.layer addSublayer:layer];
+    
+    [self.view addSubview:animateView];
+    
+    UIButton *btn = [UIButton buttonWithType:(UIButtonTypeSystem)];
+    [btn setTitle:@"animate" forState:(UIControlStateNormal)];
+    btn.frame = CGRectMake(100, 250, 100, 44);
+    [btn addTarget:self action:@selector(addAnimationToCircle) forControlEvents:(UIControlEventTouchUpInside)];
+    [self.view addSubview:btn];
+    
+}
+
+- (void)addAnimationToCircle {
+    CABasicAnimation *animate = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+    animate.repeatCount = 1;
+    animate.removedOnCompletion = NO;
+    animate.fillMode = kCAFillModeForwards;
+    animate.duration = 2;
+//    animate.fromValue = @(0.1);
+//    animate.toValue = @(0.5);
+    animate.fromValue = @(0);
+    animate.toValue = @(1);
+    
+    [self.animateLayer addAnimation:animate forKey:@"circleAnimate"];
+}
+```
+
