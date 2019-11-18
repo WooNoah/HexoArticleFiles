@@ -194,4 +194,25 @@ swift中的didset在初始化方法中调用无效. 可以使用kvo代替。
     [self.animateLayer addAnimation:animate forKey:@"circleAnimate"];
 }
 ```
+#### 2019年11月18日
+UIcollectionView, 设置不同section的headerView高度不同
+collectionview不像tableview，有设置headerview高度的代理方法。collectionview只有一个-viewForSupplementaryElementOfKind方法。
+因此在此方法中。可以获取到layout中的headerReferenceSize，然后手动修改即可
+```
+//collectionview初始化的时候layout的设置
+UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+layout.itemSize                    = CGSizeMake(WIDTH / _colNum, itemHeight);
+layout.minimumLineSpacing          = 0;
+layout.minimumInteritemSpacing     = 0;
+layout.headerReferenceSize = CGSizeMake(WIDTH, 10);
+layout.footerReferenceSize = CGSizeMake(WIDTH, 10);
+self.collectionView.collectionViewLayout = layout;
 
+//viewForSupplementaryElementOfKind代理方法中修改layout的方法
+CGFloat headerHeight = indexPath.section == 0 ? 0 : 10;
+UICollectionViewFlowLayout *layout = (id)self.collectionView.collectionViewLayout;
+layout.headerReferenceSize = CGSizeMake(WIDTH, headerHeight);
+self.collectionView.collectionViewLayout = layout;
+
+以此达到第一栏的headerView高度为0，其他栏的高度为10
+```
