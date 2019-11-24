@@ -225,5 +225,6 @@ self.collectionView.collectionViewLayout = layout;
 NSUserDefault中不支持存储NSSet对象
 只能存储原始类型： NSString, NSData, NSDate, NSNumber(CGFloat, NSInteger, BOOL)
 容器类：NSArray, NSDictionary
+如果是自定义类型，需要转成NSData数据来存储
 
 
