@@ -216,3 +216,15 @@ self.collectionView.collectionViewLayout = layout;
 
 以此达到第一栏的headerView高度为0，其他栏的高度为10
 ```
+
+#### 2019年11月19日 
+自己画的线或者弧，添加strokeEnd动画的时候，会把绘制过程展现出来
+旋转、缩放等动画都跟锚点有关系，锚点也跟layer的frame有关系。这些值都必须设置锚点才会有效果
+
+#### 2019年11月24日 
+NSUserDefault中不支持存储NSSet对象
+只能存储原始类型： NSString, NSData, NSDate, NSNumber(CGFloat, NSInteger, BOOL)
+容器类：NSArray, NSDictionary
+如果是自定义类型，需要转成NSData数据来存储
+
+
