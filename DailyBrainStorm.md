@@ -227,4 +227,17 @@ NSUserDefault中不支持存储NSSet对象
 容器类：NSArray, NSDictionary
 如果是自定义类型，需要转成NSData数据来存储
 
+#### 2019年12月11日
+##### intrinsicContentSize
+前几天有个需求，tableview的cell中存在一个imageView，但是此imageView的大小不固定，要根据后台返回的不同图片来设置图片的大小，因此tableviewcell的高度也是不固定的。所以就接触到了intrinsicContentSize这个属性了，
+
+```
+intrinsicContentSize，也就是控件的内置大小。比如UILabel，UIButton等控件，他们都有自己的内置大小。控件的内置大小往往是由控件本身的内容所决定的，比如一个UILabel的文字很长，那么该UILabel的内置大小自然会很长。控件的内置大小可以通过UIView的intrinsicContentSize属性来获取内置大小，也可以通过invalidateIntrinsicContentSize方法来在下次UI规划事件中重新计算intrinsicContentSize。
+```
+
+如果storyboard中给他把值改为placeholder，则正常添加imageView和Cell之间的约束就能达到效果。
+或者在sd下载完图片之后的回调中，获得图片的实际高度之后再修改约束也能达到效果
+
+#### 利用企业开发者账号打包分发APP,导出包的时候，要勾选生成对应的manifest.plist文件。然后在创建的页面中把点击事件的链接改为`itms-services:///?action=download-manifest&url=plist文件路径` 即可
+
 
